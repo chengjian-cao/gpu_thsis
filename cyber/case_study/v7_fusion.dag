@@ -1,0 +1,16 @@
+# Define all coms in DAG streaming.
+    module_config {
+    module_library : "/apollo/bazel-bin/cyber/case_study/lib_v7_fusion.so"
+    components {
+        class_name : "v7_fusion_component"
+        config {
+            name : "v7_fusion"
+            readers {
+                channel: "/apollo/v5"
+            }
+            readers {
+                channel: "/apollo/v6"
+            }
+        }
+      }
+    }

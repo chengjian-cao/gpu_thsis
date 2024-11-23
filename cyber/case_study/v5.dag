@@ -1,0 +1,13 @@
+# Define all coms in DAG streaming.
+    module_config {
+    module_library : "/apollo/bazel-bin/cyber/case_study/lib_v5.so"
+    components {
+        class_name : "v5_component"
+        config {
+            name : "v5"
+            readers {
+                channel: "/apollo/v1"
+            }
+        }
+      }
+    }

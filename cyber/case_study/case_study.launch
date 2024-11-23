@@ -1,0 +1,16 @@
+<cyber>
+    <module>
+        <name>case_study</name>
+        <dag_conf>/apollo/cyber/case_study/v1.dag</dag_conf>
+        <dag_conf>/apollo/cyber/case_study/v2.dag</dag_conf>
+        <dag_conf>/apollo/cyber/case_study/v3.dag</dag_conf>
+        <dag_conf>/apollo/cyber/case_study/v4.dag</dag_conf>
+        <dag_conf>/apollo/cyber/case_study/v5.dag</dag_conf>
+        <dag_conf>/apollo/cyber/case_study/v6.dag</dag_conf>
+        <dag_conf>/apollo/cyber/case_study/v7_fusion.dag</dag_conf>
+        <dag_conf>/apollo/cyber/case_study/v7.dag</dag_conf>
+        <dag_conf>/apollo/cyber/case_study/v8_fusion.dag</dag_conf>
+        <dag_conf>/apollo/cyber/case_study/v8.dag</dag_conf>
+        <process_name>case_study</process_name>
+    </module>
+</cyber>
