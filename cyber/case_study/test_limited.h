@@ -5,7 +5,7 @@
 #include "cyber/component/component.h"
 #include "cyber/component/timer_component.h"
 #include "cyber/examples/proto/examples.pb.h"
-#include "gemm_multi_streams.h"
+#include "limited_blocks_kernel.h"
 #include <cuda_runtime.h>
 
 using apollo::cyber::Component;
@@ -15,7 +15,7 @@ using apollo::cyber::Writer;
 using apollo::cyber::examples::proto::Driver;
 using apollo::cyber::Clock;
 
-class v1_timer_component : public TimerComponent {
+class test_limited_component : public TimerComponent {
  public:
   bool Init() override;
   bool Proc() override;
@@ -25,4 +25,4 @@ class v1_timer_component : public TimerComponent {
 
 };
 
-CYBER_REGISTER_COMPONENT(v1_timer_component)
+CYBER_REGISTER_COMPONENT(test_limited_component)

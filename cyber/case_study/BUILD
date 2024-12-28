@@ -21,6 +21,43 @@ apollo_component(
     deps = [
         "//cyber",
         "//cyber/examples/proto:examples_cc_proto",
+        "@local_config_cuda//cuda:cuda_headers",
+        "@local_config_cuda//cuda:cudart",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+apollo_component(
+    name = "lib_test.so",
+    srcs = ["test.cc"],
+    hdrs = ["test.h"],
+    deps = [
+        "//cyber",
+        "//cyber/examples/proto:examples_cc_proto",
+        "//cyber/croutine:cyber_croutine",
+        "@local_config_cuda//cuda:cuda_headers",
+        "@local_config_cuda//cuda:cudart",
+        ":gemm_multi_streams",
+        ":MatrixOperations",
+        ":matrix_multi",
+    ],
+    visibility = ["//visibility:private"],
+)
+
+apollo_component(
+    name = "lib_test_limited.so",
+    srcs = ["test_limited.cc"],
+    hdrs = ["test_limited.h"],
+    deps = [
+        "//cyber",
+        "//cyber/examples/proto:examples_cc_proto",
+        "//cyber/croutine:cyber_croutine",
+        "@local_config_cuda//cuda:cuda_headers",
+        "@local_config_cuda//cuda:cudart",
+        ":gemm_multi_streams",
+        ":MatrixOperations",
+        ":matrix_multi",
+        ":limited_blocks_kernel"
     ],
     visibility = ["//visibility:private"],
 )
@@ -36,8 +73,9 @@ apollo_component(
         "//cyber/croutine:cyber_croutine",
         "@local_config_cuda//cuda:cuda_headers",
         "@local_config_cuda//cuda:cudart",
-        ":neuralnetwork_cuda",
-        ":matrix_multiply_cuda",
+        ":gemm_multi_streams",
+        ":MatrixOperations",
+        ":matrix_multi",
     ],
 )
 
@@ -68,9 +106,9 @@ apollo_component(
         "//cyber/croutine:cyber_croutine",
         "@local_config_cuda//cuda:cuda_headers",
         "@local_config_cuda//cuda:cudart",
-        ":neuralnetwork_cuda",
         ":MatrixOperations",
-        ":matrix_multiply_cuda",
+        ":gemm_multi_streams",
+        ":matrix_multi",
     ],
 )
 
@@ -103,7 +141,7 @@ apollo_component(
         # "@local_config_cuda//cuda:cudart",
         # ":neuralnetwork_cuda",
         ":MatrixOperations",
-        ":matrix_multiply_cuda",
+        ":gemm_multi_streams",
     ],
 )
 
@@ -118,43 +156,11 @@ apollo_component(
         "//cyber/croutine:cyber_croutine",
         "@local_config_cuda//cuda:cuda_headers",
         "@local_config_cuda//cuda:cudart",
-        ":neuralnetwork_cuda",
         ":MatrixOperations",
-        ":matrix_multiply_cuda",
+        ":gemm_multi_streams",
     ],
 )
 
-apollo_component(
-    name = "lib_v7_fusion.so",
-    srcs = ["v7_fusion.cc"],
-    hdrs = ["v7_fusion.h"],
-    visibility = ["//visibility:private"],
-    deps = [
-        "//cyber",
-        "//cyber/examples/proto:examples_cc_proto",
-        "//cyber/croutine:cyber_croutine",
-        "@local_config_cuda//cuda:cuda_headers",
-        "@local_config_cuda//cuda:cudart",
-        ":neuralnetwork_cuda",
-        ":MatrixOperations",
-        ":matrix_multiply_cuda",
-    ],
-)
-
-apollo_component(
-    name = "lib_v8_fusion.so",
-    srcs = ["v8_fusion.cc"],
-    hdrs = ["v8_fusion.h"],
-    visibility = ["//visibility:private"],
-    deps = [
-        "//cyber",
-        "//cyber/examples/proto:examples_cc_proto",
-        # "//cyber/croutine:cyber_croutine",
-        # "@local_config_cuda//cuda:cuda_headers",
-        # "@local_config_cuda//cuda:cudart",
-        # ":neuralnetwork_cuda",
-    ],
-)
 
 apollo_component(
     name = "lib_v8.so",
@@ -167,16 +173,17 @@ apollo_component(
         # "//cyber/croutine:cyber_croutine",
         # "@local_config_cuda//cuda:cuda_headers",
         # "@local_config_cuda//cuda:cudart",
-        # ":neuralnetwork_cuda",
     ],
 )
 
+
 gpu_library(
-    name = "neuralnetwork_cuda",
-    srcs = ["NeuralNetwork.cu"],
-    hdrs = ["NeuralNetwork.h"],
+    name = "gemm_multi_streams",
+    srcs = ["gemm_multi_streams.cu"],
+    hdrs = ["gemm_multi_streams.h"],
     deps = [
         "//cyber",
+        ":smctrl",
     ] + if_cuda([
         "@local_config_cuda//cuda:cudart",
     ]) + if_rocm([
@@ -185,11 +192,26 @@ gpu_library(
 )
 
 gpu_library(
-    name = "matrix_multiply_cuda",
-    srcs = ["matrix_multiply.cu"],
-    hdrs = ["matrix_multiply.h"],
+    name = "matrix_multi",
+    srcs = ["matrix_multi.cu"],
+    hdrs = ["matrix_multi.h"],
     deps = [
         "//cyber",
+        ":smctrl",
+    ] + if_cuda([
+        "@local_config_cuda//cuda:cudart",
+    ]) + if_rocm([
+        "@local_config_rocm//rocm:hip",
+    ]),
+)
+
+gpu_library(
+    name = "limited_blocks_kernel",
+    srcs = ["limited_blocks_kernel.cu"],
+    hdrs = ["limited_blocks_kernel.h"],
+    deps = [
+        "//cyber",
+        ":smctrl",
     ] + if_cuda([
         "@local_config_cuda//cuda:cudart",
     ]) + if_rocm([
@@ -205,6 +227,71 @@ apollo_cc_library(
         # "//cyber",
         # "//cyber/examples/proto:examples_cc_proto",
         # "@local_config_cuda//cuda:cudart",
+    ],
+)
+
+
+apollo_cc_library(
+    name = "smctrl",
+    srcs = ["libsmctrl.c"],
+    hdrs = ["libsmctrl.h"],
+    deps = [
+        # "//cyber",
+        # "//cyber/examples/proto:examples_cc_proto",
+        "@local_config_cuda//cuda:cudart",
+        "@local_config_cuda//cuda:cuda_headers",
+        "@local_config_cuda//cuda:cuda_driver",  # 添加 CUDA 驱动库
+    ],
+)
+
+apollo_cc_binary(
+    name = "channel_writer",
+    srcs = ["write_sig.cc"],
+    deps = [
+        "//cyber",
+        "//cyber/examples/proto:examples_cc_proto",
+        "@local_config_cuda//cuda:cudart",
+    ],
+)
+
+apollo_cc_binary(
+    name = "libsmctrl_test_gpc_info",
+    srcs = [
+        "libsmctrl_test_gpc_info.c",
+        "testbench.h",
+    ],
+    deps = [
+        ":smctrl",        
+        "@local_config_cuda//cuda:cudart",
+        "@local_config_cuda//cuda:cuda_headers",
+        "@local_config_cuda//cuda:cuda_driver",  # 添加 CUDA 驱动库
+    ],
+)
+
+gpu_library(
+    name = "smctrl_test_mask_shared",
+    srcs = ["libsmctrl_test_mask_shared.cu",
+            "testbench.h",
+            "libsmctrl_test_mask_shared.h"],
+    deps = [
+        ":smctrl", 
+    ] + if_cuda([
+        "@local_config_cuda//cuda:cudart",
+    ]) + if_rocm([
+        "@local_config_rocm//rocm:hip",
+    ]),
+)
+
+apollo_cc_binary(
+    name = "libsmctrl_test_global_mask",
+    srcs = ["libsmctrl_test_global_mask.c",
+            "libsmctrl_test_mask_shared.h"],
+    deps = [
+        ":smctrl",        
+        ":smctrl_test_mask_shared",
+        "@local_config_cuda//cuda:cudart",
+        "@local_config_cuda//cuda:cuda_headers",
+        "@local_config_cuda//cuda:cuda_driver",  # 添加 CUDA 驱动库
     ],
 )
 

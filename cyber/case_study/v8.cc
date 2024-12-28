@@ -9,7 +9,8 @@ bool v8_component::Init() {
   return true;
 }
 
-bool v8_component::Proc(const std::shared_ptr<Driver>& msg0) {
+bool v8_component::Proc(const std::shared_ptr<Driver>& msg0, const std::shared_ptr<Driver>& msg1, 
+const std::shared_ptr<Driver>& msg2, const std::shared_ptr<Driver>& msg3) {
 
     // 增加计数器
     sync_msg_count++;

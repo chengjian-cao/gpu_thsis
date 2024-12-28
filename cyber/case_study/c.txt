@@ -2,3 +2,7 @@ bash docker/scripts/dev_into.sh
 bazel build --config=cuda cyber/case_study/...
 cyber_launch start cyber/case_study/case_study.launch
 bazel build --config=cuda --copt="-DUSE_NULLPTR_STREAM" cyber/case_study/...
+ibrary-path /opt/glibc-2.34/lib:/usr/local/cuda-11.1/compat:/usr/lib/x86_64-linux-gnu:/apollo/SMPartition-libsmctrl:/apollo/SMPartition-libsmctrl/konton_ws:/lib:/lib64:/usr/lib/gcc/x86_64-linux-gnu/7:/lib/x86_64-linux-gnu ./matrix_multi
+/opt/glibc-2.34/lib/ld-linux-x86-64.so.2 --library-path /opt/glibc-2.34/lib:/usr/local/cuda-11.1/compat:/usr/lib/x86_64-linux-gnu ./libsmctrl_test_gpc_info
+libsmctrl: nvdebug module must be loaded into kernel before using libsmctrl_get_*_info() functions
+Num GPCs: 0

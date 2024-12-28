@@ -6,7 +6,16 @@
         config {
             name : "v7"
             readers {
-                channel: "/apollo/v7_fusion"
+                channel: "/apollo/v5"
+                qos_profile: {
+                    depth : 50
+                }
+            }
+            readers {
+                channel: "/apollo/v6"
+                qos_profile: {
+                    depth : 50
+                }
             }
         }
       }

@@ -7,6 +7,9 @@
             name : "v2"
             readers {
                 channel: "/apollo/v1"
+                qos_profile: {
+                    depth : 50
+                }
             }
         }
       }

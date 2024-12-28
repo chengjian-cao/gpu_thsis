@@ -15,7 +15,7 @@ using apollo::cyber::Writer;
 using apollo::cyber::examples::proto::Driver;
 using apollo::cyber::Clock;
 
-class v1_timer_component : public TimerComponent {
+class test_component : public TimerComponent {
  public:
   bool Init() override;
   bool Proc() override;
@@ -25,4 +25,4 @@ class v1_timer_component : public TimerComponent {
 
 };
 
-CYBER_REGISTER_COMPONENT(v1_timer_component)
+CYBER_REGISTER_COMPONENT(test_component)

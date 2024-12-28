@@ -1,9 +1,10 @@
 #include <memory>
-
 #include "cyber/component/component.h"
 #include "cyber/examples/proto/examples.pb.h"
-
-
+#include "gemm_multi_streams.h"
+#include "MatrixOperations.h"
+#include "cyber/time/clock.h"
+using apollo::cyber::Clock;
 using apollo::cyber::Component;
 using apollo::cyber::ComponentBase;
 using apollo::cyber::examples::proto::Driver;
